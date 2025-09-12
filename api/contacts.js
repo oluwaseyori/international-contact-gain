@@ -1,6 +1,3 @@
-// /api/contacts.js
-// Env vars: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO
-
 const { Buffer } = require('buffer');
 
 const GITHUB_API = 'https://api.github.com';

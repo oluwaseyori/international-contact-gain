@@ -1,8 +1,3 @@
-// /api/export.js
-// Reads contacts from GitHub (data/contacts.json) and returns a .vcf download.
-// Requires env vars: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO
-// Optional: GITHUB_BRANCH (default "main"), GITHUB_FILE_PATH (default "data/contacts.json")
-
 const vCardsJS = require('vcards-js');
 const { Buffer } = require('buffer');
 
@@ -46,7 +41,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 1) Load contacts data from GitHub
     const file = await ghGetFile({
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
@@ -67,10 +61,8 @@ module.exports = async (req, res) => {
     try {
       db = JSON.parse(file.content);
     } catch {
-      // keep default empty db
     }
 
-    // 2) Validate contacts
     if (!Array.isArray(db.contacts) || db.contacts.length === 0) {
       return res.status(404).json({
         success: false,
@@ -79,10 +71,9 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 3) Generate vCards
     const vcfData = db.contacts.map((contact) => {
       try {
-        const card = vCardsJS(); // factory pattern per vcards-js
+        const card = vCardsJS(); 
         const nameParts = String(contact.fullName || '').trim().split(/\s+/);
         card.firstName = nameParts[0] || '';
         card.lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
@@ -104,7 +95,6 @@ module.exports = async (req, res) => {
       }
     }).filter(Boolean).join('\n');
 
-    // 4) Send response
     res.setHeader('Content-Type', 'text/vcard; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename="seyori_contacts.vcf"');
     res.setHeader('X-Contact-Count', String(db.contacts.length));

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Seyori’s Contact Database</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0d0f10;--panel:#0b0e0b;--fg:#c4f5c4;--muted:#6ee76e;--accent:#54ff54;--accent-2:#00f5ff;
+      --border:#1e241e;--input-bg:#0f1410;--error:#ff5c5c;--ok:#7aff7a;--whatsapp:#25D366;--wa-dark:#075E54;
+      --shadow:0 0 20px rgba(84,255,84,.12), inset 0 0 10px rgba(84,255,84,.08)
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(84,255,84,.08), transparent 60%),
+        radial-gradient(1200px 800px at 110% 10%, rgba(0,245,255,.06), transparent 55%),
+        var(--bg);
+      color:var(--fg);
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size:14px; line-height:1.55;
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:1.2rem}
+    .columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem;align-items:start}
+
+    .card{
+      border:1px solid var(--border);border-radius:12px;padding:1rem;
+      background:linear-gradient(180deg,rgba(0,0,0,.08),transparent),var(--panel);
+      box-shadow:var(--shadow);transition:opacity .25s ease, filter .25s ease
+    }
+    .card.locked{opacity:.4;filter:saturate(.6);pointer-events:none;user-select:none}
+
+    h1,h2{margin:0 0 .55rem 0}
+    h1{font-size:1.25rem}
+    h2{font-size:1.1rem}
+    .sub{color:var(--muted);margin:0 0 .7rem 0;opacity:.95;max-width:70ch}
+
+    label{display:block;margin:.45rem 0 .25rem;color:var(--muted)}
+    input,select,button{
+      width:100%;padding:.75rem;border-radius:8px;border:1px solid var(--border);
+      background:var(--input-bg);color:var(--fg);outline:none;font-size:.92rem
+    }
+    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(84,255,84,.2)}
+    select{min-height:44px;cursor:pointer}
+
+    .row{display:flex;gap:.7rem;align-items:center}
+    .row>*{flex:1}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:end}
+    @media (max-width:760px){.form-grid{grid-template-columns:1fr}}
+
+    button{cursor:pointer;margin-top:.65rem;font-weight:700;letter-spacing:.2px;transition:transform .12s ease, box-shadow .2s ease, opacity .2s ease}
+    button:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(84,255,84,.25)}
+    button:disabled{cursor:not-allowed;opacity:.6;box-shadow:none;transform:none}
+    .primary{background:var(--accent);color:#002b00;border-color:var(--accent)}
+    .neon{padding:.9rem 1rem;border-radius:10px;border:1px solid var(--accent-2);background:#0a0a0a;color:#eaffff;font-weight:800;box-shadow:0 0 10px rgba(0,245,255,.5), inset 0 0 10px rgba(0,245,255,.15)}
+    .whatsapp{background:var(--whatsapp);color:#fff;border-color:var(--whatsapp)}
+    .whatsapp-dark{background:var(--wa-dark);color:#fff;border-color:var(--wa-dark)}
+
+    .muted{color:var(--muted);font-size:.85rem}
+    .pill{display:inline-block;background:rgba(84,255,84,.1);border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;font-weight:700;font-size:.85rem}
+    .error{color:var(--error);margin:.6rem 0;padding:.45rem;border-radius:6px;background:rgba(255,92,92,.1)}
+    .success{color:var(--ok);margin:.6rem 0;padding:.45rem;border-radius:6px;background:rgba(84,255,84,.1)}
+    .footer{margin-top:1rem;text-align:center;padding-top:1rem;border-top:1px dashed var(--border)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="columns">
+
+      <section class="card">
+        <h1>Contact Gain</h1>
+        <p class="sub">Join the WhatsApp group, add your number, and download the contacts file when the timer runs out.</p>
+        <div class="pill">Contacts in database: <strong id="contactCount">0</strong></div>
+      </section>
+
+      <section class="card" id="gateCard">
+        <h2>Step 1 — Join the WhatsApp Group</h2>
+        <div class="row">
+          <a id="joinLink" href="https://chat.whatsapp.com/BLKWk1RyJ2BIgSZAPl9QlB?mode=ems_copy_t" target="_blank" rel="noopener">
+            <button class="whatsapp">Join Group</button>
+          </a>
+          <button type="button" id="verifyBtn" class="primary">Verify Joined</button>
+        </div>
+        <div id="gateMsg" class="muted" style="margin-top:.5rem">
+          Tap <strong>Join Group</strong> then hit <strong>Verify Joined</strong>.
+        </div>
+      </section>
+
+      <section class="card locked" id="step2">
+        <h2>Step 2 — Save Your Contact</h2>
+        <p class="muted">Select your country code, input your number then your name.</p>
+        <div id="message"></div>
+
+        <form id="contactForm" autocomplete="off">
+          <div class="form-grid">
+            <div>
+              <label for="ccSelect">Country code</label>
+              <select id="ccSelect" name="ccSelect" disabled></select>
+            </div>
+            <div id="customCodeWrap" style="display:none">
+              <label for="ccCustom">Custom code</label>
+              <input id="ccCustom" inputmode="numeric" pattern="\d+" placeholder="e.g. 234" />
+            </div>
+
+            <div>
+              <label for="number">Phone number</label>
+              <input id="number" name="number" placeholder="7025369036" required disabled />
+            </div>
+            <div>
+              <label for="fullName">Your name</label>
+              <input id="fullName" name="fullName" placeholder="Seyori" required disabled />
+            </div>
+          </div>
+
+          <button type="submit" id="saveBtn" class="primary" disabled>Save contact</button>
+        </form>
+      </section>
+
+      <section class="card locked" id="step3">
+        <h2>Step 3 — Download Contacts File (VCF)</h2>
+        <p class="muted">Will be available for download after the timer runs out.</p>
+        <button type="button" id="downloadBtn" class="neon" disabled>Download VCF</button>
+        <div class="muted" id="countdownText" style="margin-top:.4rem">Unlocks in <span id="countdown">--:--:--</span></div>
+      </section>
+
+      <section class="card locked" id="helpCard">
+        <h2>Need help importing?</h2>
+        <div class="row">
+          <a href="https://files.catbox.moe/jivobd.mp4" target="_blank" rel="noopener"><button class="whatsapp">Android Tutorial</button></a>
+          <a href="https://files.catbox.moe/n8pr97.mp4" target="_blank" rel="noopener"><button class="whatsapp-dark">iPhone Tutorial</button></a>
+        </div>
+      </section>
+
+    </div>
+    <footer class="footer"><p class="muted">By Seyori • Need help? Chat me on WhatsApp.</p></footer>
+  </div>
+
+  <script>
+    window.__DEPLOYED_AT__ = '2025-09-11T12:00:00+01:00'; 
+    let LOCK_DURATION = 60*5000; 
+    (function(){
+      const t = new URLSearchParams(location.search).get('test');
+      const map = { '10s':10e3, '30s':30e3, '1m':60e3, '5m':300e3 };
+      if (t && map[t]) LOCK_DURATION = map[t];
+    })();
+
+    const contactCount = document.getElementById('contactCount');
+    const messageDiv   = document.getElementById('message');
+    const joinLink     = document.getElementById('joinLink');
+    const verifyBtn    = document.getElementById('verifyBtn');
+    const gateMsg      = document.getElementById('gateMsg');
+    const step2        = document.getElementById('step2');
+    const step3        = document.getElementById('step3');
+    const helpCard     = document.getElementById('helpCard');
+
+    const contactForm  = document.getElementById('contactForm');
+    const numberEl     = document.getElementById('number');
+    const nameEl       = document.getElementById('fullName');
+    const saveBtn      = document.getElementById('saveBtn');
+
+    const ccSelect         = document.getElementById('ccSelect');
+    const customCodeWrap   = document.getElementById('customCodeWrap');
+    const ccCustom         = document.getElementById('ccCustom');
+
+    const downloadBtn   = document.getElementById('downloadBtn');
+    const countdownEl   = document.getElementById('countdown');
+    const countdownText = document.getElementById('countdownText');
+
+    const isValidName  = (name) => /^[a-zA-Z\s\-.,'\"()]+$/.test((name||'').trim());
+    const isValidPhone = (n)    => /^\d+$/.test(String(n||'').trim());
+    function showMessage(text, type){
+      messageDiv.innerHTML = `<div class="${type}">${text}</div>`;
+      setTimeout(()=> messageDiv.innerHTML = '', 3000);
+    }
+
+    const COUNTRY_CODES = [
+      {iso:'NG',name:'Nigeria',code:'234',flag:'🇳🇬'},
+      {iso:'AF',name:'Afghanistan',code:'93',flag:'🇦🇫'},
+      {iso:'AL',name:'Albania',code:'355',flag:'🇦🇱'},
+      {iso:'DZ',name:'Algeria',code:'213',flag:'🇩🇿'},
+      {iso:'AD',name:'Andorra',code:'376',flag:'🇦🇩'},
+      {iso:'AO',name:'Angola',code:'244',flag:'🇦🇴'},
+      {iso:'AG',name:'Antigua and Barbuda',code:'1',flag:'🇦🇬'},
+      {iso:'AR',name:'Argentina',code:'54',flag:'🇦🇷'},
+      {iso:'AM',name:'Armenia',code:'374',flag:'🇦🇲'},
+      {iso:'AU',name:'Australia',code:'61',flag:'🇦🇺'},
+      {iso:'AT',name:'Austria',code:'43',flag:'🇦🇹'},
+      {iso:'AZ',name:'Azerbaijan',code:'994',flag:'🇦🇿'},
+      {iso:'BS',name:'Bahamas',code:'1',flag:'🇧🇸'},
+      {iso:'BH',name:'Bahrain',code:'973',flag:'🇧🇭'},
+      {iso:'BD',name:'Bangladesh',code:'880',flag:'🇧🇩'},
+      {iso:'BB',name:'Barbados',code:'1',flag:'🇧🇧'},
+      {iso:'BY',name:'Belarus',code:'375',flag:'🇧🇾'},
+      {iso:'BE',name:'Belgium',code:'32',flag:'🇧🇪'},
+      {iso:'BZ',name:'Belize',code:'501',flag:'🇧🇿'},
+      {iso:'BJ',name:'Benin',code:'229',flag:'🇧🇯'},
+      {iso:'BT',name:'Bhutan',code:'975',flag:'🇧🇹'},
+      {iso:'BO',name:'Bolivia',code:'591',flag:'🇧🇴'},
+      {iso:'BA',name:'Bosnia and Herzegovina',code:'387',flag:'🇧🇦'},
+      {iso:'BW',name:'Botswana',code:'267',flag:'🇧🇼'},
+      {iso:'BR',name:'Brazil',code:'55',flag:'🇧🇷'},
+      {iso:'BN',name:'Brunei',code:'673',flag:'🇧🇳'},
+      {iso:'BG',name:'Bulgaria',code:'359',flag:'🇧🇬'},
+      {iso:'BF',name:'Burkina Faso',code:'226',flag:'🇧🇫'},
+      {iso:'BI',name:'Burundi',code:'257',flag:'🇧🇮'},
+      {iso:'CV',name:'Cabo Verde',code:'238',flag:'🇨🇻'},
+      {iso:'KH',name:'Cambodia',code:'855',flag:'🇰🇭'},
+      {iso:'CM',name:'Cameroon',code:'237',flag:'🇨🇲'},
+      {iso:'CA',name:'Canada',code:'1',flag:'🇨🇦'},
+      {iso:'CF',name:'Central African Republic',code:'236',flag:'🇨🇫'},
+      {iso:'TD',name:'Chad',code:'235',flag:'🇹🇩'},
+      {iso:'CL',name:'Chile',code:'56',flag:'🇨🇱'},
+      {iso:'CN',name:'China',code:'86',flag:'🇨🇳'},
+      {iso:'CO',name:'Colombia',code:'57',flag:'🇨🇴'},
+      {iso:'KM',name:'Comoros',code:'269',flag:'🇰🇲'},
+      {iso:'CG',name:'Congo',code:'242',flag:'🇨🇬'},
+      {iso:'CR',name:'Costa Rica',code:'506',flag:'🇨🇷'},
+      {iso:'CI',name:"Côte d'Ivoire",code:'225',flag:'🇨🇮'},
+      {iso:'HR',name:'Croatia',code:'385',flag:'🇭🇷'},
+      {iso:'CU',name:'Cuba',code:'53',flag:'🇨🇺'},
+      {iso:'CY',name:'Cyprus',code:'357',flag:'🇨🇾'},
+      {iso:'CZ',name:'Czech Republic',code:'420',flag:'🇨🇿'},
+      {iso:'DK',name:'Denmark',code:'45',flag:'🇩🇰'},
+      {iso:'DJ',name:'Djibouti',code:'253',flag:'🇩🇯'},
+      {iso:'DM',name:'Dominica',code:'1',flag:'🇩🇲'},
+      {iso:'DO',name:'Dominican Republic',code:'1',flag:'🇩🇴'},
+      {iso:'EC',name:'Ecuador',code:'593',flag:'🇪🇨'},
+      {iso:'EG',name:'Egypt',code:'20',flag:'🇪🇬'},
+      {iso:'SV',name:'El Salvador',code:'503',flag:'🇸🇻'},
+      {iso:'GQ',name:'Equatorial Guinea',code:'240',flag:'🇬🇶'},
+      {iso:'ER',name:'Eritrea',code:'291',flag:'🇪🇷'},
+      {iso:'EE',name:'Estonia',code:'372',flag:'🇪🇪'},
+      {iso:'SZ',name:'Eswatini',code:'268',flag:'🇸🇿'},
+      {iso:'ET',name:'Ethiopia',code:'251',flag:'🇪🇹'},
+      {iso:'FJ',name:'Fiji',code:'679',flag:'🇫🇯'},
+      {iso:'FI',name:'Finland',code:'358',flag:'🇫🇮'},
+      {iso:'FR',name:'France',code:'33',flag:'🇫🇷'},
+      {iso:'GA',name:'Gabon',code:'241',flag:'🇬🇦'},
+      {iso:'GM',name:'Gambia',code:'220',flag:'🇬🇲'},
+      {iso:'GE',name:'Georgia',code:'995',flag:'🇬🇪'},
+      {iso:'DE',name:'Germany',code:'49',flag:'🇩🇪'},
+      {iso:'GH',name:'Ghana',code:'233',flag:'🇬🇭'},
+      {iso:'GR',name:'Greece',code:'30',flag:'🇬🇷'},
+      {iso:'GD',name:'Grenada',code:'1',flag:'🇬🇩'},
+      {iso:'GT',name:'Guatemala',code:'502',flag:'🇬🇹'},
+      {iso:'GN',name:'Guinea',code:'224',flag:'🇬🇳'},
+      {iso:'GW',name:'Guinea-Bissau',code:'245',flag:'🇬🇼'},
+      {iso:'GY',name:'Guyana',code:'592',flag:'🇬🇾'},
+      {iso:'HT',name:'Haiti',code:'509',flag:'🇭🇹'},
+      {iso:'HN',name:'Honduras',code:'504',flag:'🇭🇳'},
+      {iso:'HU',name:'Hungary',code:'36',flag:'🇭🇺'},
+      {iso:'IS',name:'Iceland',code:'354',flag:'🇮🇸'},
+      {iso:'IN',name:'India',code:'91',flag:'🇮🇳'},
+      {iso:'ID',name:'Indonesia',code:'62',flag:'🇮🇩'},
+      {iso:'IR',name:'Iran',code:'98',flag:'🇮🇷'},
+      {iso:'IQ',name:'Iraq',code:'964',flag:'🇮🇶'},
+      {iso:'IE',name:'Ireland',code:'353',flag:'🇮🇪'},
+      {iso:'IL',name:'Israel',code:'972',flag:'🇮🇱'},
+      {iso:'IT',name:'Italy',code:'39',flag:'🇮🇹'},
+      {iso:'JM',name:'Jamaica',code:'1',flag:'🇯🇲'},
+      {iso:'JP',name:'Japan',code:'81',flag:'🇯🇵'},
+      {iso:'JO',name:'Jordan',code:'962',flag:'🇯🇴'},
+      {iso:'KZ',name:'Kazakhstan',code:'7',flag:'🇰🇿'},
+      {iso:'KE',name:'Kenya',code:'254',flag:'🇰🇪'},
+      {iso:'KI',name:'Kiribati',code:'686',flag:'🇰🇮'},
+      {iso:'KP',name:'North Korea',code:'850',flag:'🇰🇵'},
+      {iso:'KR',name:'South Korea',code:'82',flag:'🇰🇷'},
+      {iso:'XK',name:'Kosovo',code:'383',flag:'🇽🇰'},
+      {iso:'KW',name:'Kuwait',code:'965',flag:'🇰🇼'},
+      {iso:'KG',name:'Kyrgyzstan',code:'996',flag:'🇰🇬'},
+      {iso:'LA',name:'Laos',code:'856',flag:'🇱🇦'},
+      {iso:'LV',name:'Latvia',code:'371',flag:'🇱🇻'},
+      {iso:'LB',name:'Lebanon',code:'961',flag:'🇱🇧'},
+      {iso:'LS',name:'Lesotho',code:'266',flag:'🇱🇸'},
+      {iso:'LR',name:'Liberia',code:'231',flag:'🇱🇷'},
+      {iso:'LY',name:'Libya',code:'218',flag:'🇱🇾'},
+      {iso:'LI',name:'Liechtenstein',code:'423',flag:'🇱🇮'},
+      {iso:'LT',name:'Lithuania',code:'370',flag:'🇱🇹'},
+      {iso:'LU',name:'Luxembourg',code:'352',flag:'🇱🇺'},
+      {iso:'MG',name:'Madagascar',code:'261',flag:'🇲🇬'},
+      {iso:'MW',name:'Malawi',code:'265',flag:'🇲🇼'},
+      {iso:'MY',name:'Malaysia',code:'60',flag:'🇲🇾'},
+      {iso:'MV',name:'Maldives',code:'960',flag:'🇲🇻'},
+      {iso:'ML',name:'Mali',code:'223',flag:'🇲🇱'},
+      {iso:'MT',name:'Malta',code:'356',flag:'🇲🇹'},
+      {iso:'MH',name:'Marshall Islands',code:'692',flag:'🇲🇭'},
+      {iso:'MR',name:'Mauritania',code:'222',flag:'🇲🇷'},
+      {iso:'MU',name:'Mauritius',code:'230',flag:'🇲🇺'},
+      {iso:'MX',name:'Mexico',code:'52',flag:'🇲🇽'},
+      {iso:'FM',name:'Micronesia',code:'691',flag:'🇫🇲'},
+      {iso:'MD',name:'Moldova',code:'373',flag:'🇲🇩'},
+      {iso:'MC',name:'Monaco',code:'377',flag:'🇲🇨'},
+      {iso:'MN',name:'Mongolia',code:'976',flag:'🇲🇳'},
+      {iso:'ME',name:'Montenegro',code:'382',flag:'🇲🇪'},
+      {iso:'MA',name:'Morocco',code:'212',flag:'🇲🇦'},
+      {iso:'MZ',name:'Mozambique',code:'258',flag:'🇲🇿'},
+      {iso:'MM',name:'Myanmar',code:'95',flag:'🇲🇲'},
+      {iso:'NA',name:'Namibia',code:'264',flag:'🇳🇦'},
+      {iso:'NR',name:'Nauru',code:'674',flag:'🇳🇷'},
+      {iso:'NP',name:'Nepal',code:'977',flag:'🇳🇵'},
+      {iso:'NL',name:'Netherlands',code:'31',flag:'🇳🇱'},
+      {iso:'NZ',name:'New Zealand',code:'64',flag:'🇳🇿'},
+      {iso:'NI',name:'Nicaragua',code:'505',flag:'🇳🇮'},
+      {iso:'NE',name:'Niger',code:'227',flag:'🇳🇪'},
+      {iso:'NG',name:'Nigeria',code:'234',flag:'🇳🇬'},
+      {iso:'MK',name:'North Macedonia',code:'389',flag:'🇲🇰'},
+      {iso:'NO',name:'Norway',code:'47',flag:'🇳🇴'},
+      {iso:'OM',name:'Oman',code:'968',flag:'🇴🇲'},
+      {iso:'PK',name:'Pakistan',code:'92',flag:'🇵🇰'},
+      {iso:'PW',name:'Palau',code:'680',flag:'🇵🇼'},
+      {iso:'PA',name:'Panama',code:'507',flag:'🇵🇦'},
+      {iso:'PG',name:'Papua New Guinea',code:'675',flag:'🇵🇬'},
+      {iso:'PY',name:'Paraguay',code:'595',flag:'🇵🇾'},
+      {iso:'PE',name:'Peru',code:'51',flag:'🇵🇪'},
+      {iso:'PH',name:'Philippines',code:'63',flag:'🇵🇭'},
+      {iso:'PL',name:'Poland',code:'48',flag:'🇵🇱'},
+      {iso:'PT',name:'Portugal',code:'351',flag:'🇵🇹'},
+      {iso:'QA',name:'Qatar',code:'974',flag:'🇶🇦'},
+      {iso:'RO',name:'Romania',code:'40',flag:'🇷🇴'},
+      {iso:'RU',name:'Russia',code:'7',flag:'🇷🇺'},
+      {iso:'RW',name:'Rwanda',code:'250',flag:'🇷🇼'},
+      {iso:'KN',name:'Saint Kitts and Nevis',code:'1',flag:'🇰🇳'},
+      {iso:'LC',name:'Saint Lucia',code:'1',flag:'🇱🇨'},
+      {iso:'VC',name:'Saint Vincent and the Grenadines',code:'1',flag:'🇻🇨'},
+      {iso:'WS',name:'Samoa',code:'685',flag:'🇼🇸'},
+      {iso:'SM',name:'San Marino',code:'378',flag:'🇸🇲'},
+      {iso:'ST',name:'Sao Tome and Principe',code:'239',flag:'🇸🇹'},
+      {iso:'SA',name:'Saudi Arabia',code:'966',flag:'🇸🇦'},
+      {iso:'SN',name:'Senegal',code:'221',flag:'🇸🇳'},
+      {iso:'RS',name:'Serbia',code:'381',flag:'🇷🇸'},
+      {iso:'SC',name:'Seychelles',code:'248',flag:'🇸🇨'},
+      {iso:'SL',name:'Sierra Leone',code:'232',flag:'🇸🇱'},
+      {iso:'SG',name:'Singapore',code:'65',flag:'🇸🇬'},
+      {iso:'SK',name:'Slovakia',code:'421',flag:'🇸🇰'},
+      {iso:'SI',name:'Slovenia',code:'386',flag:'🇸🇮'},
+      {iso:'SB',name:'Solomon Islands',code:'677',flag:'🇸🇧'},
+      {iso:'SO',name:'Somalia',code:'252',flag:'🇸🇴'},
+      {iso:'ZA',name:'South Africa',code:'27',flag:'🇿🇦'},
+      {iso:'SS',name:'South Sudan',code:'211',flag:'🇸🇸'},
+      {iso:'ES',name:'Spain',code:'34',flag:'🇪🇸'},
+      {iso:'LK',name:'Sri Lanka',code:'94',flag:'🇱🇰'},
+      {iso:'SD',name:'Sudan',code:'249',flag:'🇸🇩'},
+      {iso:'SR',name:'Suriname',code:'597',flag:'🇸🇷'},
+      {iso:'SE',name:'Sweden',code:'46',flag:'🇸🇪'},
+      {iso:'CH',name:'Switzerland',code:'41',flag:'🇨🇭'},
+      {iso:'SY',name:'Syria',code:'963',flag:'🇸🇾'},
+      {iso:'TW',name:'Taiwan',code:'886',flag:'🇹🇼'},
+      {iso:'TJ',name:'Tajikistan',code:'992',flag:'🇹🇯'},
+      {iso:'TZ',name:'Tanzania',code:'255',flag:'🇹🇿'},
+      {iso:'TH',name:'Thailand',code:'66',flag:'🇹🇭'},
+      {iso:'TL',name:'Timor-Leste',code:'670',flag:'🇹🇱'},
+      {iso:'TG',name:'Togo',code:'228',flag:'🇹🇬'},
+      {iso:'TO',name:'Tonga',code:'676',flag:'🇹🇴'},
+      {iso:'TT',name:'Trinidad and Tobago',code:'1',flag:'🇹🇹'},
+      {iso:'TN',name:'Tunisia',code:'216',flag:'🇹🇳'},
+      {iso:'TR',name:'Turkey',code:'90',flag:'🇹🇷'},
+      {iso:'TM',name:'Turkmenistan',code:'993',flag:'🇹🇲'},
+      {iso:'TV',name:'Tuvalu',code:'688',flag:'🇹🇻'},
+      {iso:'UG',name:'Uganda',code:'256',flag:'🇺🇬'},
+      {iso:'UA',name:'Ukraine',code:'380',flag:'🇺🇦'},
+      {iso:'AE',name:'United Arab Emirates',code:'971',flag:'🇦🇪'},
+      {iso:'GB',name:'United Kingdom',code:'44',flag:'🇬🇧'},
+      {iso:'US',name:'United States',code:'1',flag:'🇺🇸'},
+      {iso:'UY',name:'Uruguay',code:'598',flag:'🇺🇾'},
+      {iso:'UZ',name:'Uzbekistan',code:'998',flag:'🇺🇿'},
+      {iso:'VU',name:'Vanuatu',code:'678',flag:'🇻🇺'},
+      {iso:'VA',name:'Vatican City',code:'379',flag:'🇻🇦'},
+      {iso:'VE',name:'Venezuela',code:'58',flag:'🇻🇪'},
+      {iso:'VN',name:'Vietnam',code:'84',flag:'🇻🇳'},
+      {iso:'YE',name:'Yemen',code:'967',flag:'🇾🇪'},
+      {iso:'ZM',name:'Zambia',code:'260',flag:'🇿🇲'},
+      {iso:'ZW',name:'Zimbabwe',code:'263',flag:'🇿🇼'}
+    ];
+    function populateCountrySelect(){
+      ccSelect.innerHTML = '';
+      const customOpt = document.createElement('option');
+      customOpt.value = 'custom';
+      customOpt.textContent = '✏️  Custom code (enter manually)';
+      customOpt.setAttribute('data-iso','XX');
+      ccSelect.appendChild(customOpt);
+      COUNTRY_CODES.forEach(c=>{
+        const opt = document.createElement('option');
+        opt.value = c.code;
+        opt.textContent = `${c.flag} ${c.name} (+${c.code})`;
+        opt.setAttribute('data-iso', c.iso);
+        ccSelect.appendChild(opt);
+      });
+    }
+    function detectRegionISO(){
+      try{
+        if (window.Intl && Intl.Locale){
+          const loc = new Intl.Locale(navigator.language || (navigator.languages && navigator.languages[0]) || 'en-NG');
+          if (loc && loc.region) return loc.region.toUpperCase();
+        }
+      }catch(e){}
+      const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone||'').toLowerCase();
+      if (tz.includes('lagos')) return 'NG';
+      return 'NG';
+    }
+    function setDefaultCountry(){
+      const iso = 'NG';
+      const idx = Array.from(ccSelect.options).findIndex(o => (o.getAttribute('data-iso')||'') === iso);
+      ccSelect.selectedIndex = idx >= 0 ? idx : 1;
+      toggleCustomCode();
+    }
+    function toggleCustomCode(){
+      if (ccSelect.value === 'custom'){
+        customCodeWrap.style.display = 'block';
+        ccCustom.required = true;
+        ccCustom.focus();
+      } else {
+        customCodeWrap.style.display = 'none';
+        ccCustom.required = false;
+        ccCustom.value = '';
+      }
+    }
+    ccSelect.addEventListener('change', toggleCustomCode);
+
+    const SS_JOIN_COUNT = 'seyori_join_clicks';
+    sessionStorage.setItem(SS_JOIN_COUNT, '0');
+    function getJoinCount(){ return parseInt(sessionStorage.getItem(SS_JOIN_COUNT)||'0',10) || 0; }
+    function setJoinCount(n){ sessionStorage.setItem(SS_JOIN_COUNT, String(n)); }
+
+    let joinClickLock = false;
+    joinLink.addEventListener('click', ()=>{
+      if (joinClickLock) return;
+      joinClickLock = true;
+      setJoinCount(getJoinCount()+1);
+      setTimeout(()=>{ joinClickLock = false; }, 300);
+    });
+
+    verifyBtn.addEventListener('click', ()=>{
+      const clicks = getJoinCount();
+      if (clicks < 2){
+        gateMsg.innerHTML = '<span class="error">Please join the group, then hit verify again.</span>';
+        return; 
+      }
+      unlockSections();
+      gateMsg.innerHTML = '<span class="success">Verified! You can add your contact now.</span>';
+    });
+
+    function unlockSections(){
+      [step2, step3, helpCard].forEach(sec => sec.classList.remove('locked'));
+      [ccSelect, ccCustom, numberEl, nameEl, saveBtn].forEach(el => {
+        el.disabled = false; el.setAttribute('aria-disabled','false');
+      });
+    }
+
+    async function fetchJSONWithFallback(pathBase, opts){
+      const paths = [pathBase, pathBase.endsWith('.js') ? pathBase : `${pathBase}.js`];
+      for (const p of paths){
+        try{
+          const r = await fetch(p, opts);
+          const text = await r.text();
+          let data; try { data = JSON.parse(text); } catch { data = { raw:text }; }
+          if (r.ok) return { ok:true, data };
+        }catch(e){}
+      }
+      return { ok:false, data:{ error:'Network error' } };
+    }
+
+    async function loadContactCount(){
+      const res = await fetchJSONWithFallback('/api/contacts', { method:'GET', cache:'no-store' });
+      if (res.ok){
+        const d = res.data || {};
+        contactCount.textContent = (d.count!=null ? d.count : 0);
+      }
+    }
+
+    contactForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if (saveBtn.disabled) return;
+
+      const fullName = nameEl.value;
+      const number   = numberEl.value;
+      let countryCode = (ccSelect.value === 'custom' ? (ccCustom.value||'') : (ccSelect.value||'')).replace(/\+/g,'').trim();
+
+      if (!isValidName(fullName)){
+        showMessage('Use letters, spaces, and simple punctuation only.', 'error'); return;
+      }
+      if (!isValidPhone(number) || !isValidPhone(countryCode)){
+        showMessage('Phone numbers should be digits only.', 'error'); return;
+      }
+
+      saveBtn.disabled = true; saveBtn.textContent = 'Saving...';
+      const res = await fetchJSONWithFallback('/api/contacts', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ fullName, number, countryCode })
+      });
+      if (res.ok){
+        showMessage('Saved! Thanks for adding your contact.', 'success');
+        contactForm.reset();
+        setDefaultCountry();
+        loadContactCount();
+      }else{
+        showMessage(res.data.error || 'Could not save. Try again.', 'error');
+      }
+      saveBtn.disabled = false; saveBtn.textContent = 'Save contact';
+    });
+
+    function deployedAtMs(){ const t = Date.parse(window.__DEPLOYED_AT__||''); return Number.isFinite(t)?t:Date.now(); }
+    function msToHMS(ms){ const total=Math.max(0,Math.floor(ms/1000));const h=String(Math.floor(total/3600)).padStart(2,'0');const m=String(Math.floor((total%3600)/60)).padStart(2,'0');const s=String(total%60).padStart(2,'0');return `${h}:${m}:${s}`; }
+    function setDownloadEnabled(enabled){ downloadBtn.disabled=!enabled; downloadBtn.classList.toggle('disabled',!enabled); }
+    function tickCountdown(){
+      const unlockAt = deployedAtMs()+LOCK_DURATION;
+      const remain = Math.max(0, unlockAt-Date.now());
+      const parts = msToHMS(remain);
+      if (countdownEl) countdownEl.textContent = parts;
+      const canDownload = remain===0;
+      setDownloadEnabled(canDownload);
+      countdownText.innerHTML = canDownload ? 'Ready! You can download now.' : 'Unlocks in <span id="countdown">'+parts+'</span>';
+    }
+    downloadBtn.addEventListener('click', ()=>{ if (!downloadBtn.disabled) location.href='/api/export'; });
+
+    populateCountrySelect();
+    setDefaultCountry();
+    loadContactCount();
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
+  </script>
+</body>
+</html>

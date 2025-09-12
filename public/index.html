@@ -138,7 +138,7 @@
 
   <script>
     window.__DEPLOYED_AT__ = '2025-09-11T12:00:00+01:00'; 
-    let LOCK_DURATION = 60*5000; 
+    let LOCK_DURATION = 24*60*60*1000;
     (function(){
       const t = new URLSearchParams(location.search).get('test');
       const map = { '10s':10e3, '30s':30e3, '1m':60e3, '5m':300e3 };

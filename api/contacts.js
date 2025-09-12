@@ -1,7 +1,5 @@
 // /api/contacts.js
-// GitHub-backed contacts storage: reads/writes data/contacts.json via GitHub Contents API.
-// Requires env vars: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO
-// Optional: GITHUB_BRANCH (default "main"), GITHUB_FILE_PATH (default "data/contacts.json")
+// Env vars: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO
 
 const { Buffer } = require('buffer');
 
@@ -63,7 +61,6 @@ async function ghPutFile({ owner, repo, path, branch, token, content, sha, messa
 }
 
 module.exports = async (req, res) => {
-  // CORS (optional)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -84,7 +81,6 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Load current DB from GitHub (or init a new one)
     const file = await ghGetFile({
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
@@ -104,14 +100,11 @@ module.exports = async (req, res) => {
         if (!Array.isArray(db.contacts)) db.contacts = [];
         if (typeof db.count !== 'number') db.count = db.contacts.length;
       } catch {
-        // If file is corrupted, we keep an empty db but still overwrite below on write
         db = { count: 0, contacts: [] };
       }
     }
 
     if (req.method === 'GET') {
-      // If you want to hide the full list, you can return only count by default.
-      // Here we’ll mirror your previous behavior: always return count + contacts.
       return res.json({
         count: db.count,
         contacts: db.contacts.map(c => ({
@@ -126,13 +119,11 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
       const { fullName, number, countryCode } = req.body || {};
 
-      // Normalize inputs
       const normalizedName = normalizeName(fullName || '');
       const normalizedCountryCode = normalizePhoneNumber(countryCode || '');
       const normalizedNumber = normalizePhoneNumber(number || '');
       const fullPhoneNumber = (normalizedCountryCode ? `+${normalizedCountryCode}` : '') + normalizedNumber;
 
-      // Validation
       if (!normalizedName || !/^[a-zA-Z\s\-.,'"()]+$/.test(normalizedName)) {
         return res.status(400).json({
           error: 'Name can contain letters, spaces, and basic punctuation (-.,\'"()).',
@@ -147,7 +138,6 @@ module.exports = async (req, res) => {
         });
       }
 
-      // Duplicate check: by name (case-insensitive) OR by normalized phone
       const isDup = (db.contacts || []).some(c =>
         String(c.fullName || '').toLowerCase() === normalizedName.toLowerCase() ||
         normalizePhoneNumber(c.number || '') === normalizePhoneNumber(fullPhoneNumber)
@@ -156,7 +146,6 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Contact with same name or number already exists!' });
       }
 
-      // Add new contact
       const newContact = {
         id: Date.now().toString(),
         fullName: normalizedName,
@@ -167,7 +156,6 @@ module.exports = async (req, res) => {
       db.contacts.push(newContact);
       db.count = db.contacts.length;
 
-      // Commit back to GitHub (use existing sha if file existed to avoid conflicts)
       const newContent = JSON.stringify(db, null, 2);
       const message = `Add contact: ${normalizedName} (${newContact.number})`;
 

@@ -512,7 +512,7 @@
       setDownloadEnabled(canDownload);
       countdownText.innerHTML = canDownload ? 'Ready! You can download now.' : 'Unlocks in <span id="countdown">'+parts+'</span>';
     }
-    downloadBtn.addEventListener('click', ()=>{ if (!downloadBtn.disabled) location.href='/api/export'; });
+    downloadBtn.addEventListener('click', ()=>{ if (!downloadBtn.disabled) location.href='/api/export.js'; });
 
     populateCountrySelect();
     setDefaultCountry();

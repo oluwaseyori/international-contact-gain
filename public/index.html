@@ -56,6 +56,7 @@
     .neon{padding:.9rem 1rem;border-radius:10px;border:1px solid var(--accent-2);background:#0a0a0a;color:#eaffff;font-weight:800;box-shadow:0 0 10px rgba(0,245,255,.5), inset 0 0 10px rgba(0,245,255,.15)}
     .whatsapp{background:var(--whatsapp);color:#fff;border-color:var(--whatsapp)}
     .whatsapp-dark{background:var(--wa-dark);color:#fff;border-color:var(--wa-dark)}
+    .telegram{background:#229ED9;color:#fff;border-color:#229ED9}
 
     .muted{color:var(--muted);font-size:.85rem}
     .pill{display:inline-block;background:rgba(84,255,84,.1);border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;font-weight:700;font-size:.85rem}
@@ -80,10 +81,14 @@
           <a id="joinLink" href="https://chat.whatsapp.com/BLKWk1RyJ2BIgSZAPl9QlB?mode=ems_copy_t" target="_blank" rel="noopener">
             <button class="whatsapp">Join Group</button>
           </a>
+          <!-- NEW: Telegram join button -->
+          <a id="tgLink" href="https://t.me/friendsandfamilyyyyyy" target="_blank" rel="noopener">
+            <button class="telegram">Join Telegram</button>
+          </a>
           <button type="button" id="verifyBtn" class="primary">Verify Joined</button>
         </div>
         <div id="gateMsg" class="muted" style="margin-top:.5rem">
-          Tap <strong>Join Group</strong> then hit <strong>Verify Joined</strong>.
+          Tap the join buttons (WhatsApp/Telegram) — at least <strong>two taps</strong> total — then hit <strong>Verify Joined</strong>.
         </div>
       </section>
 
@@ -137,8 +142,8 @@
   </div>
 
   <script>
-    window.__DEPLOYED_AT__ = '2025-09-13T19:03:59+01:00';
-    let LOCK_DURATION = 2*60*1000;
+    window.__DEPLOYED_AT__ = '2025-09-11T12:00:00+01:00'; 
+    let LOCK_DURATION = 24*60*60*1000;
     (function(){
       const t = new URLSearchParams(location.search).get('test');
       const map = { '10s':10e3, '30s':30e3, '1m':60e3, '5m':300e3 };
@@ -430,10 +435,19 @@
       setTimeout(()=>{ joinClickLock = false; }, 300);
     });
 
+    const tgLink = document.getElementById('tgLink');
+    let tgClickLock = false;
+    tgLink.addEventListener('click', ()=>{
+      if (tgClickLock) return;
+      tgClickLock = true;
+      setJoinCount(getJoinCount()+1);
+      setTimeout(()=>{ tgClickLock = false; }, 300);
+    });
+
     verifyBtn.addEventListener('click', ()=>{
       const clicks = getJoinCount();
       if (clicks < 2){
-        gateMsg.innerHTML = '<span class="error">Please join the group, then hit verify again.</span>';
+        gateMsg.innerHTML = '<span class="error">Please use the join buttons (WhatsApp/Telegram) and try verify again.</span>';
         return; 
       }
       unlockSections();
@@ -468,9 +482,6 @@
       }
     }
 
-    /* =========================
-       NEW: notifications + lock
-       ========================= */
     let downloadUnlocked = false;
 
     function lockSaveSectionAfterUnlock(){
@@ -500,13 +511,11 @@
         }catch(e){}
       }
     }
-    /* ======================= */
 
     contactForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       if (saveBtn.disabled) return;
 
-      /* NEW: ask for notification permission on user action */
       requestNotifyPermission();
 
       const fullName = nameEl.value;
@@ -549,7 +558,6 @@
       setDownloadEnabled(canDownload);
       countdownText.innerHTML = canDownload ? 'Ready! You can download now.' : 'Unlocks in <span id="countdown">'+parts+'</span>';
 
-      /* NEW: when it first unlocks, lock Step 2 and notify */
       if (canDownload && !downloadUnlocked){
         downloadUnlocked = true;
         lockSaveSectionAfterUnlock();

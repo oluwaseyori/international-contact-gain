@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>International Contact gain</title>
+  <title>International Contact Gain</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
@@ -56,7 +56,6 @@
     .neon{padding:.9rem 1rem;border-radius:10px;border:1px solid var(--accent-2);background:#0a0a0a;color:#eaffff;font-weight:800;box-shadow:0 0 10px rgba(0,245,255,.5), inset 0 0 10px rgba(0,245,255,.15)}
     .whatsapp{background:var(--whatsapp);color:#fff;border-color:var(--whatsapp)}
     .whatsapp-dark{background:var(--wa-dark);color:#fff;border-color:var(--wa-dark)}
-    /* Telegram button color */
     .telegram{background:#229ED9;color:#fff;border-color:#229ED9}
 
     .muted{color:var(--muted);font-size:.85rem}
@@ -88,7 +87,7 @@
           <button type="button" id="verifyBtn" class="primary">Verify Joined</button>
         </div>
         <div id="gateMsg" class="muted" style="margin-top:.5rem">
-          Join both groups, then hit <strong>Verify Joined</strong> to confirm if you've joined which unlocks the site.
+          Join both groups, use the <strong>Verify Joined</strong> to confirm if you've joined which unlocks the site.
         </div>
       </section>
 
@@ -110,11 +109,11 @@
 
             <div>
               <label for="number">Phone number</label>
-              <input id="number" name="number" placeholder="Your number here" required disabled />
+              <input id="number" name="number" placeholder="7025369036" required disabled />
             </div>
             <div>
               <label for="fullName">Your name</label>
-              <input id="fullName" name="fullName" placeholder="Your name here" required disabled />
+              <input id="fullName" name="fullName" placeholder="Seyori" required disabled />
             </div>
           </div>
 
@@ -138,11 +137,11 @@
       </section>
 
     </div>
-    <footer class="footer"><p class="muted">Hosting a monetary giveaway on the telegram group so do well to participate and join.</p></footer>
+    <footer class="footer"><p class="muted">Hosting a monetary giveaway on the telegram group so do well to join and participate.</p></footer>
   </div>
 
   <script>
-    window.__DEPLOYED_AT__ = '2025-09-13T23:10:00+01:00'; 
+    window.__DEPLOYED_AT__ = '2025-09-13T23:50:00+01:00'; 
     let LOCK_DURATION = 5*60*1000;
     (function(){
       const t = new URLSearchParams(location.search).get('test');
@@ -170,7 +169,6 @@
     const ccCustom         = document.getElementById('ccCustom');
 
     const downloadBtn   = document.getElementById('downloadBtn');
-    const countdownEl   = document.getElementById('countdown');
     const countdownText = document.getElementById('countdownText');
 
     const isValidName  = (name) => /^[a-zA-Z\s\-.,'\"()]+$/.test((name||'').trim());
@@ -180,7 +178,7 @@
       setTimeout(()=> messageDiv.innerHTML = '', 3000);
     }
 
-    const COUNTRIES = [
+    const COUNTRY_CODES = [
       {iso:'AF',name:'Afghanistan',code:'93',flag:'🇦🇫'},
       {iso:'AL',name:'Albania',code:'355',flag:'🇦🇱'},
       {iso:'DZ',name:'Algeria',code:'213',flag:'🇩🇿'},
@@ -422,7 +420,6 @@
     }
     ccSelect.addEventListener('change', toggleCustomCode);
 
-    // ---- Per-button double verification (requires 2 WA + 2 TG clicks) ----
     const SS_WA_COUNT = 'seyori_join_clicks_wa';
     const SS_TG_COUNT = 'seyori_join_clicks_tg';
     sessionStorage.setItem(SS_WA_COUNT, '0');
@@ -433,24 +430,27 @@
     const setTg = (n) => sessionStorage.setItem(SS_TG_COUNT, String(n));
 
     let waLock=false, tgLock=false;
+    const joinLink = document.getElementById('joinLink');
+    const tgLinkEl = document.getElementById('tgLink');
     joinLink.addEventListener('click', ()=>{
       if (waLock) return;
       waLock = true;
       setWa(getWa()+1);
       setTimeout(()=>{ waLock=false; }, 300);
     });
-    tgLink.addEventListener('click', ()=>{
+    tgLinkEl.addEventListener('click', ()=>{
       if (tgLock) return;
       tgLock = true;
       setTg(getTg()+1);
       setTimeout(()=>{ tgLock=false; }, 300);
     });
 
-    verifyBtn.addEventListener('click', ()=>{
+    const verifyBtnEl = document.getElementById('verifyBtn');
+    verifyBtnEl.addEventListener('click', ()=>{
       const wa = getWa();
       const tg = getTg();
       if (wa < 2 || tg < 2){
-        gateMsg.innerHTML = '<span class="error">Join both groups twice each (WhatsApp ×2 and Telegram ×2), then verify again.</span>';
+        gateMsg.innerHTML = '<span class="error">Join both groups, then verify again.</span>';
         return; 
       }
       unlockSections();
@@ -485,7 +485,6 @@
       }
     }
 
-    /* notifications + lock (unchanged logic, but no toast on lock) */
     let downloadUnlocked = false;
 
     function lockSaveSectionAfterUnlock(){
@@ -494,7 +493,6 @@
         el.disabled = true;
         el.setAttribute('aria-disabled','true');
       });
-      // removed message per request
     }
 
     function requestNotifyPermission(){
@@ -553,14 +551,21 @@
     function deployedAtMs(){ const t = Date.parse(window.__DEPLOYED_AT__||''); return Number.isFinite(t)?t:Date.now(); }
     function msToHMS(ms){ const total=Math.max(0,Math.floor(ms/1000));const h=String(Math.floor(total/3600)).padStart(2,'0');const m=String(Math.floor((total%3600)/60)).padStart(2,'0');const s=String(total%60).padStart(2,'0');return `${h}:${m}:${s}`; }
     function setDownloadEnabled(enabled){ downloadBtn.disabled=!enabled; downloadBtn.classList.toggle('disabled',!enabled); }
+
     function tickCountdown(){
       const unlockAt = deployedAtMs()+LOCK_DURATION;
       const remain = Math.max(0, unlockAt-Date.now());
       const parts = msToHMS(remain);
+
+      const countdownEl = document.getElementById('countdown');
       if (countdownEl) countdownEl.textContent = parts;
+
       const canDownload = remain===0;
       setDownloadEnabled(canDownload);
-      countdownText.innerHTML = canDownload ? 'Ready! You can download now.' : 'Unlocks in <span id="countdown">'+parts+'</span>';
+
+      countdownText.innerHTML = canDownload
+        ? 'Ready! You can download now.'
+        : 'Unlocks in <span id="countdown">'+parts+'</span>';
 
       if (canDownload && !downloadUnlocked){
         downloadUnlocked = true;
@@ -568,6 +573,7 @@
         notifyUnlock();
       }
     }
+
     downloadBtn.addEventListener('click', ()=>{ if (!downloadBtn.disabled) location.href='/api/export.js'; });
 
     populateCountrySelect();

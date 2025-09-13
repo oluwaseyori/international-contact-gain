@@ -468,9 +468,46 @@
       }
     }
 
+    /* =========================
+       NEW: notifications + lock
+       ========================= */
+    let downloadUnlocked = false;
+
+    function lockSaveSectionAfterUnlock(){
+      step2.classList.add('locked');
+      [ccSelect, ccCustom, numberEl, nameEl, saveBtn].forEach(el=>{
+        el.disabled = true;
+        el.setAttribute('aria-disabled','true');
+      });
+      showMessage('Contacts file is ready — saving new contacts is paused.', 'success');
+    }
+
+    function requestNotifyPermission(){
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default'){
+        Notification.requestPermission().catch(()=>{});
+      }
+    }
+
+    function notifyUnlock(){
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'granted'){
+        try{
+          new Notification('Contacts file is ready 🎉', {
+            body: 'You can download the VCF now.',
+            icon: '/favicon.ico'
+          });
+        }catch(e){}
+      }
+    }
+    /* ======================= */
+
     contactForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       if (saveBtn.disabled) return;
+
+      /* NEW: ask for notification permission on user action */
+      requestNotifyPermission();
 
       const fullName = nameEl.value;
       const number   = numberEl.value;
@@ -511,6 +548,13 @@
       const canDownload = remain===0;
       setDownloadEnabled(canDownload);
       countdownText.innerHTML = canDownload ? 'Ready! You can download now.' : 'Unlocks in <span id="countdown">'+parts+'</span>';
+
+      /* NEW: when it first unlocks, lock Step 2 and notify */
+      if (canDownload && !downloadUnlocked){
+        downloadUnlocked = true;
+        lockSaveSectionAfterUnlock();
+        notifyUnlock();
+      }
     }
     downloadBtn.addEventListener('click', ()=>{ if (!downloadBtn.disabled) location.href='/api/export.js'; });
 

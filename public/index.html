@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>International Contact Gain</title>
+  <title>Seyori’s Contact Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
@@ -71,7 +71,7 @@
 
       <section class="card">
         <h1>Contact Gain</h1>
-        <p class="sub">Join the groups, add your number, and download the contacts file when the timer runs out.</p>
+        <p class="sub">Join the WhatsApp group, add your number, and download the contacts file when the timer runs out.</p>
         <div class="pill">Contacts in database: <strong id="contactCount">0</strong></div>
       </section>
 
@@ -79,7 +79,7 @@
         <h2>Step 1 — Join the WhatsApp Group</h2>
         <div class="row">
           <a id="joinLink" href="https://chat.whatsapp.com/BLKWk1RyJ2BIgSZAPl9QlB?mode=ems_copy_t" target="_blank" rel="noopener">
-            <button class="whatsapp-dark">Join Whatsapp</button>
+            <button class="whatsapp-dark">Join Group</button>
           </a>
           <a id="tgLink" href="https://t.me/friendsandfamilyyyyyy" target="_blank" rel="noopener">
             <button class="telegram">Join Telegram</button>
@@ -87,7 +87,7 @@
           <button type="button" id="verifyBtn" class="primary">Verify Joined</button>
         </div>
         <div id="gateMsg" class="muted" style="margin-top:.5rem">
-          Join both groups, use the <strong>Verify Joined</strong> to confirm if you've joined then the site unlocks.
+          Tap each join button twice (WhatsApp ×2 and Telegram ×2), then hit <strong>Verify Joined</strong>.
         </div>
       </section>
 
@@ -137,12 +137,12 @@
       </section>
 
     </div>
-    <footer class="footer"><p class="muted">Hosting a monetary giveaway on the telegram group so do well to join and participate.</p></footer>
+    <footer class="footer"><p class="muted">By Seyori • Need help? Chat me on WhatsApp.</p></footer>
   </div>
 
   <script>
-    window.__DEPLOYED_AT__ = '2025-09-13T23:50:00+01:00'; 
-    let LOCK_DURATION = 5*60*1000;
+    window.__DEPLOYED_AT__ = '2025-09-11T12:00:00+01:00'; 
+    let LOCK_DURATION = 24*60*60*1000;
     (function(){
       const t = new URLSearchParams(location.search).get('test');
       const map = { '10s':10e3, '30s':30e3, '1m':60e3, '5m':300e3 };
@@ -179,201 +179,12 @@
     }
 
     const COUNTRY_CODES = [
+      {iso:'NG',name:'Nigeria',code:'234',flag:'🇳🇬'},
       {iso:'AF',name:'Afghanistan',code:'93',flag:'🇦🇫'},
       {iso:'AL',name:'Albania',code:'355',flag:'🇦🇱'},
       {iso:'DZ',name:'Algeria',code:'213',flag:'🇩🇿'},
       {iso:'AD',name:'Andorra',code:'376',flag:'🇦🇩'},
       {iso:'AO',name:'Angola',code:'244',flag:'🇦🇴'},
-      {iso:'AG',name:'Antigua and Barbuda',code:'1',flag:'🇦🇬'},
-      {iso:'AR',name:'Argentina',code:'54',flag:'🇦🇷'},
-      {iso:'AM',name:'Armenia',code:'374',flag:'🇦🇲'},
-      {iso:'AU',name:'Australia',code:'61',flag:'🇦🇺'},
-      {iso:'AT',name:'Austria',code:'43',flag:'🇦🇹'},
-      {iso:'AZ',name:'Azerbaijan',code:'994',flag:'🇦🇿'},
-      {iso:'BS',name:'Bahamas',code:'1',flag:'🇧🇸'},
-      {iso:'BH',name:'Bahrain',code:'973',flag:'🇧🇭'},
-      {iso:'BD',name:'Bangladesh',code:'880',flag:'🇧🇩'},
-      {iso:'BB',name:'Barbados',code:'1',flag:'🇧🇧'},
-      {iso:'BY',name:'Belarus',code:'375',flag:'🇧🇾'},
-      {iso:'BE',name:'Belgium',code:'32',flag:'🇧🇪'},
-      {iso:'BZ',name:'Belize',code:'501',flag:'🇧🇿'},
-      {iso:'BJ',name:'Benin',code:'229',flag:'🇧🇯'},
-      {iso:'BT',name:'Bhutan',code:'975',flag:'🇧🇹'},
-      {iso:'BO',name:'Bolivia',code:'591',flag:'🇧🇴'},
-      {iso:'BA',name:'Bosnia and Herzegovina',code:'387',flag:'🇧🇦'},
-      {iso:'BW',name:'Botswana',code:'267',flag:'🇧🇼'},
-      {iso:'BR',name:'Brazil',code:'55',flag:'🇧🇷'},
-      {iso:'BN',name:'Brunei',code:'673',flag:'🇧🇳'},
-      {iso:'BG',name:'Bulgaria',code:'359',flag:'🇧🇬'},
-      {iso:'BF',name:'Burkina Faso',code:'226',flag:'🇧🇫'},
-      {iso:'BI',name:'Burundi',code:'257',flag:'🇧🇮'},
-      {iso:'CV',name:'Cabo Verde',code:'238',flag:'🇨🇻'},
-      {iso:'KH',name:'Cambodia',code:'855',flag:'🇰🇭'},
-      {iso:'CM',name:'Cameroon',code:'237',flag:'🇨🇲'},
-      {iso:'CA',name:'Canada',code:'1',flag:'🇨🇦'},
-      {iso:'CF',name:'Central African Republic',code:'236',flag:'🇨🇫'},
-      {iso:'TD',name:'Chad',code:'235',flag:'🇹🇩'},
-      {iso:'CL',name:'Chile',code:'56',flag:'🇨🇱'},
-      {iso:'CN',name:'China',code:'86',flag:'🇨🇳'},
-      {iso:'CO',name:'Colombia',code:'57',flag:'🇨🇴'},
-      {iso:'KM',name:'Comoros',code:'269',flag:'🇰🇲'},
-      {iso:'CG',name:'Congo',code:'242',flag:'🇨🇬'},
-      {iso:'CR',name:'Costa Rica',code:'506',flag:'🇨🇷'},
-      {iso:'CI',name:"Côte d'Ivoire",code:'225',flag:'🇨🇮'},
-      {iso:'HR',name:'Croatia',code:'385',flag:'🇭🇷'},
-      {iso:'CU',name:'Cuba',code:'53',flag:'🇨🇺'},
-      {iso:'CY',name:'Cyprus',code:'357',flag:'🇨🇾'},
-      {iso:'CZ',name:'Czech Republic',code:'420',flag:'🇨🇿'},
-      {iso:'DK',name:'Denmark',code:'45',flag:'🇩🇰'},
-      {iso:'DJ',name:'Djibouti',code:'253',flag:'🇩🇯'},
-      {iso:'DM',name:'Dominica',code:'1',flag:'🇩🇲'},
-      {iso:'DO',name:'Dominican Republic',code:'1',flag:'🇩🇴'},
-      {iso:'EC',name:'Ecuador',code:'593',flag:'🇪🇨'},
-      {iso:'EG',name:'Egypt',code:'20',flag:'🇪🇬'},
-      {iso:'SV',name:'El Salvador',code:'503',flag:'🇸🇻'},
-      {iso:'GQ',name:'Equatorial Guinea',code:'240',flag:'🇬🇶'},
-      {iso:'ER',name:'Eritrea',code:'291',flag:'🇪🇷'},
-      {iso:'EE',name:'Estonia',code:'372',flag:'🇪🇪'},
-      {iso:'SZ',name:'Eswatini',code:'268',flag:'🇸🇿'},
-      {iso:'ET',name:'Ethiopia',code:'251',flag:'🇪🇹'},
-      {iso:'FJ',name:'Fiji',code:'679',flag:'🇫🇯'},
-      {iso:'FI',name:'Finland',code:'358',flag:'🇫🇮'},
-      {iso:'FR',name:'France',code:'33',flag:'🇫🇷'},
-      {iso:'GA',name:'Gabon',code:'241',flag:'🇬🇦'},
-      {iso:'GM',name:'Gambia',code:'220',flag:'🇬🇲'},
-      {iso:'GE',name:'Georgia',code:'995',flag:'🇬🇪'},
-      {iso:'DE',name:'Germany',code:'49',flag:'🇩🇪'},
-      {iso:'GH',name:'Ghana',code:'233',flag:'🇬🇭'},
-      {iso:'GR',name:'Greece',code:'30',flag:'🇬🇷'},
-      {iso:'GD',name:'Grenada',code:'1',flag:'🇬🇩'},
-      {iso:'GT',name:'Guatemala',code:'502',flag:'🇬🇹'},
-      {iso:'GN',name:'Guinea',code:'224',flag:'🇬🇳'},
-      {iso:'GW',name:'Guinea-Bissau',code:'245',flag:'🇬🇼'},
-      {iso:'GY',name:'Guyana',code:'592',flag:'🇬🇾'},
-      {iso:'HT',name:'Haiti',code:'509',flag:'🇭🇹'},
-      {iso:'HN',name:'Honduras',code:'504',flag:'🇭🇳'},
-      {iso:'HU',name:'Hungary',code:'36',flag:'🇭🇺'},
-      {iso:'IS',name:'Iceland',code:'354',flag:'🇮🇸'},
-      {iso:'IN',name:'India',code:'91',flag:'🇮🇳'},
-      {iso:'ID',name:'Indonesia',code:'62',flag:'🇮🇩'},
-      {iso:'IR',name:'Iran',code:'98',flag:'🇮🇷'},
-      {iso:'IQ',name:'Iraq',code:'964',flag:'🇮🇶'},
-      {iso:'IE',name:'Ireland',code:'353',flag:'🇮🇪'},
-      {iso:'IL',name:'Israel',code:'972',flag:'🇮🇱'},
-      {iso:'IT',name:'Italy',code:'39',flag:'🇮🇹'},
-      {iso:'JM',name:'Jamaica',code:'1',flag:'🇯🇲'},
-      {iso:'JP',name:'Japan',code:'81',flag:'🇯🇵'},
-      {iso:'JO',name:'Jordan',code:'962',flag:'🇯🇴'},
-      {iso:'KZ',name:'Kazakhstan',code:'7',flag:'🇰🇿'},
-      {iso:'KE',name:'Kenya',code:'254',flag:'🇰🇪'},
-      {iso:'KI',name:'Kiribati',code:'686',flag:'🇰🇮'},
-      {iso:'KP',name:'North Korea',code:'850',flag:'🇰🇵'},
-      {iso:'KR',name:'South Korea',code:'82',flag:'🇰🇷'},
-      {iso:'XK',name:'Kosovo',code:'383',flag:'🇽🇰'},
-      {iso:'KW',name:'Kuwait',code:'965',flag:'🇰🇼'},
-      {iso:'KG',name:'Kyrgyzstan',code:'996',flag:'🇰🇬'},
-      {iso:'LA',name:'Laos',code:'856',flag:'🇱🇦'},
-      {iso:'LV',name:'Latvia',code:'371',flag:'🇱🇻'},
-      {iso:'LB',name:'Lebanon',code:'961',flag:'🇱🇧'},
-      {iso:'LS',name:'Lesotho',code:'266',flag:'🇱🇸'},
-      {iso:'LR',name:'Liberia',code:'231',flag:'🇱🇷'},
-      {iso:'LY',name:'Libya',code:'218',flag:'🇱🇾'},
-      {iso:'LI',name:'Liechtenstein',code:'423',flag:'🇱🇮'},
-      {iso:'LT',name:'Lithuania',code:'370',flag:'🇱🇹'},
-      {iso:'LU',name:'Luxembourg',code:'352',flag:'🇱🇺'},
-      {iso:'MG',name:'Madagascar',code:'261',flag:'🇲🇬'},
-      {iso:'MW',name:'Malawi',code:'265',flag:'🇲🇼'},
-      {iso:'MY',name:'Malaysia',code:'60',flag:'🇲🇾'},
-      {iso:'MV',name:'Maldives',code:'960',flag:'🇲🇻'},
-      {iso:'ML',name:'Mali',code:'223',flag:'🇲🇱'},
-      {iso:'MT',name:'Malta',code:'356',flag:'🇲🇹'},
-      {iso:'MH',name:'Marshall Islands',code:'692',flag:'🇲🇭'},
-      {iso:'MR',name:'Mauritania',code:'222',flag:'🇲🇷'},
-      {iso:'MU',name:'Mauritius',code:'230',flag:'🇲🇺'},
-      {iso:'MX',name:'Mexico',code:'52',flag:'🇲🇽'},
-      {iso:'FM',name:'Micronesia',code:'691',flag:'🇫🇲'},
-      {iso:'MD',name:'Moldova',code:'373',flag:'🇲🇩'},
-      {iso:'MC',name:'Monaco',code:'377',flag:'🇲🇨'},
-      {iso:'MN',name:'Mongolia',code:'976',flag:'🇲🇳'},
-      {iso:'ME',name:'Montenegro',code:'382',flag:'🇲🇪'},
-      {iso:'MA',name:'Morocco',code:'212',flag:'🇲🇦'},
-      {iso:'MZ',name:'Mozambique',code:'258',flag:'🇲🇿'},
-      {iso:'MM',name:'Myanmar',code:'95',flag:'🇲🇲'},
-      {iso:'NA',name:'Namibia',code:'264',flag:'🇳🇦'},
-      {iso:'NR',name:'Nauru',code:'674',flag:'🇳🇷'},
-      {iso:'NP',name:'Nepal',code:'977',flag:'🇳🇵'},
-      {iso:'NL',name:'Netherlands',code:'31',flag:'🇳🇱'},
-      {iso:'NZ',name:'New Zealand',code:'64',flag:'🇳🇿'},
-      {iso:'NI',name:'Nicaragua',code:'505',flag:'🇳🇮'},
-      {iso:'NE',name:'Niger',code:'227',flag:'🇳🇪'},
-      {iso:'NG',name:'Nigeria',code:'234',flag:'🇳🇬'},
-      {iso:'MK',name:'North Macedonia',code:'389',flag:'🇲🇰'},
-      {iso:'NO',name:'Norway',code:'47',flag:'🇳🇴'},
-      {iso:'OM',name:'Oman',code:'968',flag:'🇴🇲'},
-      {iso:'PK',name:'Pakistan',code:'92',flag:'🇵🇰'},
-      {iso:'PW',name:'Palau',code:'680',flag:'🇵🇼'},
-      {iso:'PA',name:'Panama',code:'507',flag:'🇵🇦'},
-      {iso:'PG',name:'Papua New Guinea',code:'675',flag:'🇵🇬'},
-      {iso:'PY',name:'Paraguay',code:'595',flag:'🇵🇾'},
-      {iso:'PE',name:'Peru',code:'51',flag:'🇵🇪'},
-      {iso:'PH',name:'Philippines',code:'63',flag:'🇵🇭'},
-      {iso:'PL',name:'Poland',code:'48',flag:'🇵🇱'},
-      {iso:'PT',name:'Portugal',code:'351',flag:'🇵🇹'},
-      {iso:'QA',name:'Qatar',code:'974',flag:'🇶🇦'},
-      {iso:'RO',name:'Romania',code:'40',flag:'🇷🇴'},
-      {iso:'RU',name:'Russia',code:'7',flag:'🇷🇺'},
-      {iso:'RW',name:'Rwanda',code:'250',flag:'🇷🇼'},
-      {iso:'KN',name:'Saint Kitts and Nevis',code:'1',flag:'🇰🇳'},
-      {iso:'LC',name:'Saint Lucia',code:'1',flag:'🇱🇨'},
-      {iso:'VC',name:'Saint Vincent and the Grenadines',code:'1',flag:'🇻🇨'},
-      {iso:'WS',name:'Samoa',code:'685',flag:'🇼🇸'},
-      {iso:'SM',name:'San Marino',code:'378',flag:'🇸🇲'},
-      {iso:'ST',name:'Sao Tome and Principe',code:'239',flag:'🇸🇹'},
-      {iso:'SA',name:'Saudi Arabia',code:'966',flag:'🇸🇦'},
-      {iso:'SN',name:'Senegal',code:'221',flag:'🇸🇳'},
-      {iso:'RS',name:'Serbia',code:'381',flag:'🇷🇸'},
-      {iso:'SC',name:'Seychelles',code:'248',flag:'🇸🇨'},
-      {iso:'SL',name:'Sierra Leone',code:'232',flag:'🇸🇱'},
-      {iso:'SG',name:'Singapore',code:'65',flag:'🇸🇬'},
-      {iso:'SK',name:'Slovakia',code:'421',flag:'🇸🇰'},
-      {iso:'SI',name:'Slovenia',code:'386',flag:'🇸🇮'},
-      {iso:'SB',name:'Solomon Islands',code:'677',flag:'🇸🇧'},
-      {iso:'SO',name:'Somalia',code:'252',flag:'🇸🇴'},
-      {iso:'ZA',name:'South Africa',code:'27',flag:'🇿🇦'},
-      {iso:'SS',name:'South Sudan',code:'211',flag:'🇸🇸'},
-      {iso:'ES',name:'Spain',code:'34',flag:'🇪🇸'},
-      {iso:'LK',name:'Sri Lanka',code:'94',flag:'🇱🇰'},
-      {iso:'SD',name:'Sudan',code:'249',flag:'🇸🇩'},
-      {iso:'SR',name:'Suriname',code:'597',flag:'🇸🇷'},
-      {iso:'SE',name:'Sweden',code:'46',flag:'🇸🇪'},
-      {iso:'CH',name:'Switzerland',code:'41',flag:'🇨🇭'},
-      {iso:'SY',name:'Syria',code:'963',flag:'🇸🇾'},
-      {iso:'TW',name:'Taiwan',code:'886',flag:'🇹🇼'},
-      {iso:'TJ',name:'Tajikistan',code:'992',flag:'🇹🇯'},
-      {iso:'TZ',name:'Tanzania',code:'255',flag:'🇹🇿'},
-      {iso:'TH',name:'Thailand',code:'66',flag:'🇹🇭'},
-      {iso:'TL',name:'Timor-Leste',code:'670',flag:'🇹🇱'},
-      {iso:'TG',name:'Togo',code:'228',flag:'🇹🇬'},
-      {iso:'TO',name:'Tonga',code:'676',flag:'🇹🇴'},
-      {iso:'TT',name:'Trinidad and Tobago',code:'1',flag:'🇹🇹'},
-      {iso:'TN',name:'Tunisia',code:'216',flag:'🇹🇳'},
-      {iso:'TR',name:'Turkey',code:'90',flag:'🇹🇷'},
-      {iso:'TM',name:'Turkmenistan',code:'993',flag:'🇹🇲'},
-      {iso:'TV',name:'Tuvalu',code:'688',flag:'🇹🇻'},
-      {iso:'UG',name:'Uganda',code:'256',flag:'🇺🇬'},
-      {iso:'UA',name:'Ukraine',code:'380',flag:'🇺🇦'},
-      {iso:'AE',name:'United Arab Emirates',code:'971',flag:'🇦🇪'},
-      {iso:'GB',name:'United Kingdom',code:'44',flag:'🇬🇧'},
-      {iso:'US',name:'United States',code:'1',flag:'🇺🇸'},
-      {iso:'UY',name:'Uruguay',code:'598',flag:'🇺🇾'},
-      {iso:'UZ',name:'Uzbekistan',code:'998',flag:'🇺🇿'},
-      {iso:'VU',name:'Vanuatu',code:'678',flag:'🇻🇺'},
-      {iso:'VA',name:'Vatican City',code:'379',flag:'🇻🇦'},
-      {iso:'VE',name:'Venezuela',code:'58',flag:'🇻🇪'},
-      {iso:'VN',name:'Vietnam',code:'84',flag:'🇻🇳'},
-      {iso:'YE',name:'Yemen',code:'967',flag:'🇾🇪'},
-      {iso:'ZM',name:'Zambia',code:'260',flag:'🇿🇲'},
-      {iso:'ZW',name:'Zimbabwe',code:'263',flag:'🇿🇼'}
     ];
     function populateCountrySelect(){
       ccSelect.innerHTML = '';
@@ -420,6 +231,7 @@
     }
     ccSelect.addEventListener('change', toggleCustomCode);
 
+    // ---- Per-button double verification (requires 2 WA + 2 TG clicks) ----
     const SS_WA_COUNT = 'seyori_join_clicks_wa';
     const SS_TG_COUNT = 'seyori_join_clicks_tg';
     sessionStorage.setItem(SS_WA_COUNT, '0');
@@ -450,7 +262,7 @@
       const wa = getWa();
       const tg = getTg();
       if (wa < 2 || tg < 2){
-        gateMsg.innerHTML = '<span class="error">Join both groups, then verify again.</span>';
+        gateMsg.innerHTML = '<span class="error">Join both groups twice each (WhatsApp ×2 and Telegram ×2), then verify again.</span>';
         return; 
       }
       unlockSections();
@@ -485,6 +297,7 @@
       }
     }
 
+    /* notifications + lock */
     let downloadUnlocked = false;
 
     function lockSaveSectionAfterUnlock(){
@@ -557,12 +370,14 @@
       const remain = Math.max(0, unlockAt-Date.now());
       const parts = msToHMS(remain);
 
+      // Re-query countdown span each tick so it never gets stale
       const countdownEl = document.getElementById('countdown');
       if (countdownEl) countdownEl.textContent = parts;
 
       const canDownload = remain===0;
       setDownloadEnabled(canDownload);
 
+      // Show ready message again on unlock
       countdownText.innerHTML = canDownload
         ? 'Ready! You can download now.'
         : 'Unlocks in <span id="countdown">'+parts+'</span>';

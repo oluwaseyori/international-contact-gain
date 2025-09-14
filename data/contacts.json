@@ -1,11 +1,4 @@
 {
-  "count": 1,
-  "contacts": [
-    {
-      "id": "1757808062191",
-      "fullName": "Seyori",
-      "number": "+2347025369036",
-      "timestamp": "2025-09-14T00:01:02.191Z"
-    }
-  ]
+  "count": 0,
+  "contacts": []
 }

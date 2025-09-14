@@ -1,4 +1,4 @@
-# 📇 Seyori’s Contact Database
+# 📇 Seyori’s Contact Gain Site
 
 A simple but powerful contact collection web app.  
 Visitors must **join both a WhatsApp and a Telegram group** (with double-click verification) before they can save their contact.  

@@ -436,7 +436,7 @@
     verifyBtn.addEventListener('click', ()=>{
       const wa = getWa();
       const tg = getTg();
-      if (wa < 1 || tg < 1){
+      if (wa < 0 || tg < 0){
         gateMsg.innerHTML = '<span class="error">Join both groups, then verify again.</span>';
         return; 
       }
